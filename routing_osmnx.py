@@ -27,13 +27,6 @@ def join_graphs(G1, G2):
 
     return G1
 
-class CustomException(Exception):
-    def __init__(self, source, target):
-        self.source = source
-        self.target = target
-        self.message = f"No path found between {source} and {target}."
-        super().__init__(self.message)
-
 # CALCULATES DISTANCE BETWEEN TWO LATITUDE&LONGITUDE COORDINATIOINS
 def routing_distance(coords_1, coords_2, radius = 100, threshold = 1):
     
@@ -79,3 +72,9 @@ def routing_distance(coords_1, coords_2, radius = 100, threshold = 1):
     route_length = nx.shortest_path_length(graph, origin_node, destination_node, 'length')
 
     print(f"The shortest path is about {route_length : .2f} meters")
+    
+    routing = []
+    for node in route:
+        routing.append(graph.nodes.data())
+    
+    return routing

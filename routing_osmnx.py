@@ -28,14 +28,18 @@ def join_graphs(G1, G2):
     return G1
 
 # CALCULATES DISTANCE BETWEEN TWO LATITUDE&LONGITUDE COORDINATIOINS
-def routing_distance(coords_1, coords_2, radius = 100, threshold = 1):
+def routing_distance(coords_1, coords_2, radius = 0, threshold = 1):
     
     #calculating distance using geopy
     geodistance = geopy.distance.geodesic(coords_1, coords_2).km
     print(f"The distance between two coordinations using 'geopy' is {geodistance : .2f} kilometers.")
 
+    #calculate radius
+    if radius = 0:
+        radius = geodistance
+        radius_km = radius*1000
+
     #calculating the "Origin Graph" which is centered around coords_1
-    radius_km = radius*1000
     graph = ox.graph_from_point(coords_1, dist=radius_km, network_type='drive')
     origin_node = ox.distance.nearest_nodes(G=graph, X=coords_1[1], Y=coords_1[0])
 

@@ -35,7 +35,7 @@ def routing_distance(coords_1, coords_2, radius = 0, threshold = 1):
     print(f"The distance between two coordinations using 'geopy' is {geodistance : .2f} kilometers.")
 
     #calculate radius
-    if radius = 0:
+    if radius == 0:
         radius = round(geodistance)/4
     
     radius_km = radius*1000 
@@ -53,8 +53,14 @@ def routing_distance(coords_1, coords_2, radius = 0, threshold = 1):
         nearest_node = node_graph_distance(coords_2, graph)[1] #nearest node to destination is calculated
         middle_graph = ox.graph_from_point(nearest_node, dist=radius_km, network_type='drive') #a middle graph is created
         graph = join_graphs(graph, middle_graph) #middle graph is added to the original graph
-        distance = node_graph_distance(coords_2, graph)[0] #the distance is updated
+        distance_new = node_graph_distance(coords_2, graph)[0] #the distance is updated
+        distance_change = distance - distance_new
         
+        if distance_change == 0:
+            distance = 0
+        else:
+            distance = distance_new
+
         undirect_graph = graph.to_undirected()
         if not nx.is_connected(undirect_graph):
             print("Graph is not connected")

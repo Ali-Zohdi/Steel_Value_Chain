@@ -73,8 +73,8 @@ def routing_distance(coords_1, coords_2, radius = 100, threshold = 1):
 
     print(f"The shortest path is about {route_length : .2f} meters")
     
-    routing = []
-    for node in route:
-        routing.append(graph.nodes.data())
+    # routing = []
+    # for node in route:
+    #     routing.append(graph.nodes.data())
     
-    return routing
+    return route, graph

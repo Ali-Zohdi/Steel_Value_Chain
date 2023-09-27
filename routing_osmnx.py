@@ -36,8 +36,9 @@ def routing_distance(coords_1, coords_2, radius = 0, threshold = 1):
 
     #calculate radius
     if radius = 0:
-        radius = geodistance
-        radius_km = radius*1000
+        radius = round(geodistance)/4
+    
+    radius_km = radius*1000 
 
     #calculating the "Origin Graph" which is centered around coords_1
     graph = ox.graph_from_point(coords_1, dist=radius_km, network_type='drive')

@@ -9,6 +9,7 @@ s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedr
 
 driver = webdriver.Chrome(service=s)
 driver.get(url)
+driver.set_window_size(1920, 1080)
 
 def sub_industries():
 
@@ -25,7 +26,7 @@ def sub_industries():
         sub_ind_id += 1
 
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        sub_industry_click = driver.find_element(By.XPATH, f'//*[@id="mainPageContainer"]/div/div[2]/div/a[{sub_ind_id}]/div/span')
+        sub_industry_click = driver.find_element(By.XPATH, f'//*[@id="mainPageContainer"]/div/div[2]/div/a[{sub_ind_id}]/div')
         sub_industry_click.click()
        
         page_source = driver.page_source
@@ -42,5 +43,7 @@ def sub_industries():
         print(sub_industry_list)
         driver.back()           
 
+    return sub_industry_list
 
-sub_industries()
+mylist = sub_industries()
+print(len(mylist))

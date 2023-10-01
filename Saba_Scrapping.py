@@ -5,50 +5,49 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 
-def sub_industries():
+def GET_unit_subjects(URLs):
 
-    url = 'https://infosaba.com/industries/آهن-و-فولاد'
     s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedriver-win32\\chromedriver-win32\\chromedriver.exe")
-
     driver = webdriver.Chrome(service=s)
-    driver.get(url)
-    driver.set_window_size(1920, 1080)
 
-    page_source = driver.page_source
-    soup = BeautifulSoup(page_source, 'html.parser')
-    elements = soup.find_all(class_='d-flex m-1')
-    hrefs = [element.find('h3').text.strip() for element in elements]
+    url_id = 0
+    units_list = []
+    while url_id < len(URLs):
 
-    print('title', hrefs)
+        driver.get(URLs[url_id])
+        driver.set_window_size(1920, 1080)
 
-    sub_ind_id = 0
-    sub_industry_list = []
-    while sub_ind_id in range(len(hrefs)):
-        sub_ind_id += 1
-
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        sub_industry_click = driver.find_element(By.XPATH, f'//*[@id="mainPageContainer"]/div/div[2]/div/a[{sub_ind_id}]/div')
-        sub_industry_click.click()
-       
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, 'html.parser')
-        elements = soup.find_all(class_='d-flex m-1')
-        hrefs_2 = [element.find('h3').text.strip() for element in elements]
+        Subjects = soup.find_all(class_='d-flex m-1')
+        headers = [subject.find('h3').text.strip() for subject in Subjects]
 
-        if len(hrefs_2) == 0:
-            sub_industry_list.append([hrefs[sub_ind_id - 1], hrefs[sub_ind_id]])
-        else:
-            for i in range(len(hrefs_2)):
-                sub_industry_list.append([hrefs[sub_ind_id - 1], hrefs_2[i]])    
-   
-        print(sub_industry_list)
-        driver.back()           
+        unit_id = 0
+        while unit_id in range(len(headers)):
+            unit_id += 1
 
-    return sub_industry_list
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            Unit_Click = driver.find_element(By.XPATH, f'//*[@id="mainPageContainer"]/div/div[2]/div/a[{unit_id}]/div')
+            Unit_Click.click()
+        
+            page_source = driver.page_source
+            soup = BeautifulSoup(page_source, 'html.parser')
+            Units = soup.find_all(class_='d-flex m-1')
+            unit_list = [unit.find('h3').text.strip() for unit in Units]
 
-# mylist = sub_industries()
-# print(len(mylist))
+            if len(unit_list) == 0:
+                units_list.append([url_id, headers[unit_id - 1], headers[unit_id - 1]])
+            else:
+                for i in range(len(unit_list)):
+                    units_list.append([url_id, headers[unit_id - 1], unit_list[i]])    
+    
+            driver.back()
+        
+        url_id += 1
 
+    units_list = pd.DataFrame(units_list, columns=['industry.id', 'subject', 'unit'])         
+
+    return units_list
 
 def GET_industries():
 
@@ -91,6 +90,6 @@ def GET_industries():
         except:
             break
     
-    industries = pd.DataFrame(industries, columns=['mother_industry_name', 'mother_industry_ENG_name', 'name', 'URL'])
+    industries = pd.DataFrame(industries, columns=['mother_industry', 'mother_industry_ENG', 'industry', 'URL'])
 
     return industries

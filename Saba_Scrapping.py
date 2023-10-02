@@ -45,9 +45,20 @@ def GET_unit_subjects(URLs):
         
         url_id += 1
 
-    units_list = pd.DataFrame(units_list, columns=['industry.id', 'subject', 'unit'])         
+    units_list = pd.DataFrame(units_list, columns=['industry.id', 'subject', 'unit'])
+
+    unit = list(units_list['unit'])
+    unit_urls = []
+
+    for u in unit:
+        url_ = u.replace('(', '').replace(')', '').replace(' ', '-')
+        url_text = f'https://infosaba.com/Unit_Subjects/{url_}'
+        unit_urls.append(url_text)
+
+    units_list['URL'] = unit_urls         
 
     return units_list
+
 
 def GET_industries():
 
@@ -90,6 +101,35 @@ def GET_industries():
         except:
             break
     
-    industries = pd.DataFrame(industries, columns=['mother_industry', 'mother_industry_ENG', 'industry', 'URL'])
+    industries = pd.DataFrame(industries, columns=['mother_industry', 'mother_industry_ENG', 'name', 'URL'])
 
     return industries
+
+
+def GET_complexes():
+    
+    url = 'https://infosaba.com/complexes/showlist'
+    s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedriver-win32\\chromedriver-win32\\chromedriver.exe")
+
+    driver = webdriver.Chrome(service=s)
+    driver.get(url)
+    driver.set_window_size(1920, 1080)
+
+    card_list = driver.find_element(By.ID, 'counter-cards')
+
+    while True:
+        before_scroll = len(card_list.find_elements(By.CLASS_NAME, 'd-none'))
+        driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
+        time.sleep(3)
+        after_scroll = len(card_list.find_elements(By.CLASS_NAME, 'd-none'))
+        if after_scroll == before_scroll:
+            break    
+
+    Complexes = card_list.find_elements(By.CLASS_NAME, 'counter-card')
+    complex_list = [complexes.text.strip().split('\n') for complexes in Complexes]
+
+    complex_list = pd.DataFrame(complex_list, columns=['city', 'name', 'industry.name'])
+
+    return complex_list
+
+#//*[@id="counter-cards"]/a[3]

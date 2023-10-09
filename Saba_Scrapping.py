@@ -174,8 +174,8 @@ def GET_unit_complex():
         # break
         return
     
-    page_2 = driver.find_element(By.XPATH, '//*[@id="ajaxcontent"]/div[3]/div/nav/ul/li[4]/span')
-    # page_2.click()
+    page_2 = driver.find_element(By.XPATH, '//*[@id="ajaxcontent"]/div[3]/div/nav/ul/li[2]/span')
+    page_2.click()
     print('done')
     time.sleep(10)
 

@@ -132,4 +132,52 @@ def GET_complexes():
 
     return complex_list
 
-#//*[@id="counter-cards"]/a[3]
+
+def GET_unit_complex():
+
+    # url = 'https://infosaba.com/Unit_Subjects/تاسیسات-استخراج-سنگ-آهن'
+    # url = 'https://infosaba.com/Unit_Subjects/ورق-سرد'
+    url = 'https://infosaba.com/Unit_Subjects/فولادسازی-به-روش-کوره-قوس-و-القایی'
+    s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedriver-win32\\chromedriver-win32\\chromedriver.exe")
+
+    driver = webdriver.Chrome(service=s)
+    driver.get(url)
+    driver.set_window_size(1920, 1080)
+
+    complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
+    complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
+
+    #Check for Complexes
+    if len(complex_list) == 0:
+        print(f'There is no Complex in this link: {url}')
+        # break
+        return
+    
+    showall_button = driver.find_element(By.ID, 'showallbutton')
+    showall_button.click()
+
+    while True:
+        before_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+        driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
+        time.sleep(2)
+        after_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+        if after_scroll == before_scroll:
+            complexes_inpage = after_scroll
+            break 
+    
+    Complexes = complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100')
+    complex_list = [complexes.text.strip().split('\n') for complexes in Complexes]
+
+    pages = complex_list_container.find_elements(By.CLASS_NAME, 'page-link')
+    print(len(pages))
+    if len(pages) < 2:
+        print('All of Complexes are scrapped !')
+        # break
+        return
+    
+    page_2 = driver.find_element(By.XPATH, '//*[@id="ajaxcontent"]/div[3]/div/nav/ul/li[4]/span')
+    # page_2.click()
+    print('done')
+    time.sleep(10)
+
+GET_unit_complex()

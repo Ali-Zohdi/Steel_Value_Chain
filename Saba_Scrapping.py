@@ -162,7 +162,6 @@ def GET_unit_complex():
         time.sleep(2)
         after_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
         if after_scroll == before_scroll:
-            complexes_inpage = after_scroll
             break 
     
     Complexes = complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100')

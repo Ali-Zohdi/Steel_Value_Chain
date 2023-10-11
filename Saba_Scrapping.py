@@ -140,7 +140,7 @@ def GET_unit_complex(URLs):
     s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedriver-win32\\chromedriver-win32\\chromedriver.exe")
     driver = webdriver.Chrome(service=s)
 
-    unit_complex_complete = [['unit.id', 'unit.url', 'complex.name', 'capacity', 'capacity_Tons', 'capacity_measure', 'under_construction', 'under_construction_Tons', 'under_construction_measure']]
+    unit_complex_complete = [['unit.id', 'unit.url', 'complex.name', 'capacity', 'capacity_value', 'capacity_measure', 'under_construction', 'under_construction_value', 'under_construction_measure']]
     url_id = 0
     while url_id < len(URLs):
         url = URLs[url_id]
@@ -148,17 +148,42 @@ def GET_unit_complex(URLs):
         driver.set_window_size(1920, 1080)
         time.sleep(3)
 
-        complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
-        complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
-
+        try:
+            complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
+            complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
+        # try:
+        #     driver.close()
+        #     driver = webdriver.Chrome(service=s)
+        #     driver.get(url)
+        #     driver.set_window_size(1920, 1080)
+        #     time.sleep(3)
+        #     complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
+        #     complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
+        except:
+            url_id += 1
+            continue
+ 
         #Check for Complexes
         if len(complex_list) == 0:
             print(f'There is no Complex in this link: {url}')
             url_id += 1
             continue
 
-        showall_button = driver.find_element(By.ID, 'showallbutton')
-        showall_button.click()
+        # try:
+        #     driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")        
+        #     showall_button = driver.find_element(By.ID, 'showallbutton')
+        #     showall_button.click()
+        # except:
+        #     driver.close()
+        #     driver = webdriver.Chrome(service=s)
+        #     driver.get(url)
+        #     driver.set_window_size(1920, 1080)
+        #     time.sleep(3)            
+        #     driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")        
+        #     showall_button = driver.find_element(By.ID, 'showallbutton')
+        #     showall_button.click()
+
+        driver.execute_script('toggleshowall();')
 
         while True:
             before_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
@@ -196,6 +221,6 @@ def GET_unit_complex(URLs):
         url_id += 1
 
     Unit_Complex_list = pd.DataFrame(unit_complex_complete[1:], columns=unit_complex_complete[0])
-    Unit_Complex_list = Unit_Complex_list[['unit.id', 'unit.url', 'complex.name', 'capacity_Tons', 'under_construction_Tons']]
+    Unit_Complex_list.drop(columns=['capacity', 'under_construction'], axis=1, inplace=True)
 
     return Unit_Complex_list      

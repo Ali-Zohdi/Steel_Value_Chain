@@ -1,6 +1,8 @@
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
@@ -133,50 +135,67 @@ def GET_complexes():
     return complex_list
 
 
-def GET_unit_complex():
+def GET_unit_complex(URLs):
 
-    # url = 'https://infosaba.com/Unit_Subjects/تاسیسات-استخراج-سنگ-آهن'
-    # url = 'https://infosaba.com/Unit_Subjects/ورق-سرد'
-    url = 'https://infosaba.com/Unit_Subjects/فولادسازی-به-روش-کوره-قوس-و-القایی'
     s = Service(r"Z:\\HQ\BDM\\a.zohdi\\Data Engineering\\Github\\Geocoding\\chromedriver-win32\\chromedriver-win32\\chromedriver.exe")
-
     driver = webdriver.Chrome(service=s)
-    driver.get(url)
-    driver.set_window_size(1920, 1080)
 
-    complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
-    complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
+    unit_complex_complete = [['unit.id', 'unit.url', 'complex.name', 'capacity', 'capacity_Tons', 'capacity_measure', 'under_construction', 'under_construction_Tons', 'under_construction_measure']]
+    url_id = 0
+    while url_id < len(URLs):
+        url = URLs[url_id]
+        driver.get(url)
+        driver.set_window_size(1920, 1080)
+        time.sleep(3)
 
-    #Check for Complexes
-    if len(complex_list) == 0:
-        print(f'There is no Complex in this link: {url}')
-        # break
-        return
-    
-    showall_button = driver.find_element(By.ID, 'showallbutton')
-    showall_button.click()
+        complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
+        complex_list = complex_list_container.find_elements(By.CSS_SELECTOR, 'div.d-flex.flex-wrap.flex-md-row.justify-content-center.mt-4.px-0 > div')
 
-    while True:
-        before_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
-        driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
-        time.sleep(2)
-        after_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
-        if after_scroll == before_scroll:
-            break 
-    
-    Complexes = complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100')
-    complex_list = [complexes.text.strip().split('\n') for complexes in Complexes]
+        #Check for Complexes
+        if len(complex_list) == 0:
+            print(f'There is no Complex in this link: {url}')
+            url_id += 1
+            continue
 
-    pages = complex_list_container.find_elements(By.CLASS_NAME, 'page-link')
-    print(len(pages))
-    if len(pages) < 2:
-        print('All of Complexes are scrapped !')
-        # break
-        return
-    
-    page_2 = driver.find_element(By.XPATH, '//*[@id="ajaxcontent"]/div[3]/div/nav/ul/li[2]/span')
-    page_2.click()
-    print('done')
-    time.sleep(10)
+        showall_button = driver.find_element(By.ID, 'showallbutton')
+        showall_button.click()
 
-GET_unit_complex()
+        while True:
+            before_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+            driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+            time.sleep(2)
+            after_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+            if after_scroll == before_scroll:
+                break 
+        
+        Complexes = complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100')
+        complex_list = [complexes.text.strip().split('\n') for complexes in Complexes]
+
+        pages = complex_list_container.find_elements(By.CLASS_NAME, 'page-link')
+        if len(pages) < 2:
+            pass
+        else :
+            page = 1
+            while page < len(pages):
+                page += 1
+                driver.execute_script(f'mptmodulesrefresh({page});')
+                complex_list_container = driver.find_element(By.ID, 'ajaxcontent')
+                while True:
+                    before_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+                    driver.execute_script("window.scrollBy(0,document.body.scrollHeight);")
+                    time.sleep(2)
+                    after_scroll = len(complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100'))
+                    if after_scroll == before_scroll:
+                        break 
+                Complexes = complex_list_container.find_elements(By.CLASS_NAME, 'w-md-100')
+                current_page_complex_list = [complexes.text.strip().split('\n') for complexes in Complexes]
+                complex_list.extend(current_page_complex_list)
+        
+        Unit_Complex = [[url_id, url] + sublist for sublist in complex_list]
+        unit_complex_complete.extend(Unit_Complex)
+        url_id += 1
+
+    Unit_Complex_list = pd.DataFrame(unit_complex_complete[1:], columns=unit_complex_complete[0])
+    Unit_Complex_list = Unit_Complex_list[['unit.id', 'unit.url', 'complex.name', 'capacity_Tons', 'under_construction_Tons']]
+
+    return Unit_Complex_list      

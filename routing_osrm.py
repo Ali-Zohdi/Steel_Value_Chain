@@ -3,6 +3,8 @@ from typing import Union
 
 def route(coordinates , alternatives : Union[int,str] ="false", steps=False, annotations : Union[int,str] ="false", geometries="polyline", overview="simplified"):
 
+
+    ## Checking parameters of the request
     alternatives_url = steps_url = geometries_url = annotations_url = overview_url = ""
 
     if alternatives == "false":

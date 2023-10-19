@@ -124,7 +124,7 @@ def route(coordinates , alternatives : Union[int,str] ="false", steps=False, ann
     return result
 
 
-def table(sources : list, destinations : list, annotations='distance,duration'):
+def table(sources : list, sources_reference : list, destinations : list, destinations_reference : list, annotations='distance,duration'):
     """
     Computes the duration of the fastest route between all pairs of supplied coordinates. Returns the durations or distances or both between the coordinate pairs. Note that the distances are not the shortest distance between two coordinates, but rather the distances of the fastest routes. Duration is in seconds and distances is in meters.
 
@@ -207,10 +207,10 @@ def table(sources : list, destinations : list, annotations='distance,duration'):
     duration_min = [[x / 60 for x in row] for row in duration_sec]
     duration_h = [[x / 60 for x in row] for row in duration_min]
 
-    distance_m = pd.DataFrame(distance_m, index=sources, columns=destinations)
-    distance_km = pd.DataFrame(distance_km, index=sources, columns=destinations)
-    duration_min = pd.DataFrame(duration_min, index=sources, columns=destinations)
-    duration_h = pd.DataFrame(duration_h, index=sources, columns=destinations)
+    distance_m = pd.DataFrame(distance_m, index=sources_reference, columns=destinations_reference)
+    distance_km = pd.DataFrame(distance_km, index=sources_reference, columns=destinations_reference)
+    duration_min = pd.DataFrame(duration_min, index=sources_reference, columns=destinations_reference)
+    duration_h = pd.DataFrame(duration_h, index=sources_reference, columns=destinations_reference)
 
     result = {'distance_m': distance_m,
               'distance_km': distance_km,

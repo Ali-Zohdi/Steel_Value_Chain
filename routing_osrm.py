@@ -221,3 +221,28 @@ def table(sources : list, sources_reference : list, destinations : list, destina
               'response': response}
 
     return result
+
+def get_map(route):
+    
+    m = folium.Map(location=[(route[0][0] + route[-1][0])/2, 
+                             (route[0][1] + route[-1][1])/2],
+                             zoom_start=7)
+
+    folium.PolyLine(
+        route,
+        weight=8,
+        color='blue',
+        opacity=0.6
+    ).add_to(m)
+
+    folium.Marker(
+        location=route[0],
+        icon=folium.Icon(icon='play', color='green')
+    ).add_to(m)
+
+    folium.Marker(
+        location=route[-1],
+        icon=folium.Icon(icon='stop', color='red')
+    ).add_to(m)
+
+    return m

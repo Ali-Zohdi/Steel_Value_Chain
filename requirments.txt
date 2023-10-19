@@ -1,0 +1,10 @@
+pandas
+numpy
+folium
+polyline
+requests
+typing
+geopy
+selenium
+time
+beautifulsoup4

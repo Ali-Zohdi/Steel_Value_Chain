@@ -124,7 +124,7 @@ def route(coordinates , alternatives : Union[int,str] ="false", steps=False, ann
     return result
 
 
-def table(sources : list, sources_reference : list, destinations : list, destinations_reference : list, annotations='distance,duration'):
+def table(sources : list, sources_reference : list, destinations : list, destinations_reference : list):
     """
     Computes the duration of the fastest route between all pairs of supplied coordinates. Returns the durations or distances or both between the coordinate pairs. Note that the distances are not the shortest distance between two coordinates, but rather the distances of the fastest routes. Duration is in seconds and distances is in meters.
 
@@ -132,13 +132,15 @@ def table(sources : list, sources_reference : list, destinations : list, destina
     ----------
     sources : list
         A list of lat-long coordinates (lat, long)
+    
+    sources_references : list
+        A list of references like name or index for sources
 
     destinations : list
-        A list of lat-long coordinates (lat, long)
-    
-    annotation : "distance,duration" (default), "distance", "duration"
-        Return the requested table or tables in response.
+        A list of lat-long coordinates (lat, long)    
 
+    destinations_references : list
+        A list of references like name or index for destinations
     Return
     ------
     result['distance_m'] : DataFrame
@@ -161,7 +163,7 @@ def table(sources : list, sources_reference : list, destinations : list, destina
     #############
 
         ## Checking parameters of the request
-    annotations_url = f"?annotations={annotations}"
+    annotations_url = "?annotations=distance,duration"
 
     if len(sources) == 0 or len(destinations) == 0:
         return print("Error: sources or destinations list is null")

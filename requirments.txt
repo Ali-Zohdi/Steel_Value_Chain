@@ -6,5 +6,4 @@ requests
 typing
 geopy
 selenium
-time
 beautifulsoup4

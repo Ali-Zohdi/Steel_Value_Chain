@@ -18,4 +18,4 @@ Now that we have complexes and their coordinations, we want to be able to measur
 ## Visualization
 In the [project run file](#project_.ipynb), all steps of the project are done.
 For an example of the use-case of the [routing script](#routing_osrm.py), I followed all steps above and generated a distance matrix for complexes that produce Colored Sheets and need source complexes that produce Galvanized Sheets. Then as an example of distance matrix, a visualization for possible routes from 'مجتمع فولاد مبارکه' to 'مجتمع هفت الماس' has been illustrated.
-![Untitled](https://github.com/Ali-Zohdi/Steel_Value_Chain/assets/116817374/ea3304c9-030f-4c73-bb4e-989884372d9c)
+![Uploading Untitled.png…]()
